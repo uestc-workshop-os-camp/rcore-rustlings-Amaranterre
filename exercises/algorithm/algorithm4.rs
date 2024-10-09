@@ -3,7 +3,6 @@
 	This problem requires you to implement a basic interface for a binary tree
 */
 
-//I AM NOT DONE
 use std::cmp::Ordering;
 use std::fmt::Debug;
 
@@ -50,14 +49,63 @@ where
 
     // Insert a value into the BST
     fn insert(&mut self, value: T) {
-        //TODO
+        let mut current = &mut self.root;
+        if current.is_none() {
+            self.root = Some(Box::new(TreeNode::new(value)));
+            return ;
+        }
+
+        while let Some(ref mut current_node) = current {
+            match value.cmp(&current_node.value) {
+                Ordering::Less => {
+                    
+                    if current_node.left.is_none() {
+                        current_node.left = Some(Box::new(TreeNode::new(value)));
+                        break;
+                    } 
+                    current = &mut current_node.left;
+                }
+                Ordering::Equal => {
+                    return ;
+                }
+                Ordering::Greater => {
+                    
+                    if current_node.right.is_none() {
+                        current_node.right = Some(Box::new(TreeNode::new(value)));
+                        break;
+                    }
+                    current = &mut current_node.right;
+                }
+            }
+        }
     }
 
     // Search for a value in the BST
     fn search(&self, value: T) -> bool {
-        //TODO
-        true
+        let mut current = &self.root;
+
+        while let Some(ref current_node) = current {
+            match value.cmp(&current_node.value) {
+                Ordering::Less => {
+                    if current_node.left.is_none() {
+                        return false;
+                    }
+                    current = &current_node.left;
+                },
+                Ordering::Equal => {
+                    return true;
+                },
+                Ordering::Greater => {
+                    if current_node.right.is_none() {
+                        return false;
+                    }
+                    current = &current_node.right;
+                }
+            }
+        }
+        false
     }
+    
 }
 
 impl<T> TreeNode<T>
