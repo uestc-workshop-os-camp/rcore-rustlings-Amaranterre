@@ -2,7 +2,6 @@
 	heap
 	This question requires you to implement a binary heap function
 */
-// I AM NOT DONE
 
 use std::cmp::Ord;
 use std::default::Default;
@@ -37,7 +36,18 @@ where
     }
 
     pub fn add(&mut self, value: T) {
-        //TODO
+        self.count += 1;
+        self.items.push(value);
+        let mut current_idx = self.count;
+
+        while current_idx != 0 && current_idx != 1 {
+            let parent = self.parent_idx(current_idx);
+            if (self.comparator)(&self.items[parent], &self.items[current_idx]) {
+                break;
+            }
+            self.items.swap(parent, current_idx);
+            current_idx = parent;
+        } 
     }
 
     fn parent_idx(&self, idx: usize) -> usize {
@@ -57,8 +67,20 @@ where
     }
 
     fn smallest_child_idx(&self, idx: usize) -> usize {
-        //TODO
-		0
+        let left_idx = self.left_child_idx(idx);
+        let right_idx = self.right_child_idx(idx);
+
+        if left_idx <= self.count && right_idx <= self.count {
+            if (self.comparator)(&self.items[left_idx], &self.items[right_idx]) {
+                return left_idx;
+            } else {
+                return right_idx;
+            };
+        } else if left_idx <= self.count {
+            return left_idx;
+        } else {
+            return 0;
+        }
     }
 }
 
@@ -79,13 +101,32 @@ where
 
 impl<T> Iterator for Heap<T>
 where
-    T: Default,
+    T: Default + Clone,
 {
     type Item = T;
 
     fn next(&mut self) -> Option<T> {
-        //TODO
-		None
+        if self.is_empty() {
+            return None;
+        }
+
+        self.items.swap(1, self.count);
+        self.count -= 1;
+
+        let mut current_idx = 1;
+        loop {
+            let best_child_idx = self.smallest_child_idx(current_idx);
+            
+            // no child or the heap has been legal!
+            if best_child_idx == 0 || (self.comparator)(&self.items[current_idx], &self.items[best_child_idx]) {
+                break;
+            } else {
+                self.items.swap(current_idx, best_child_idx);
+                current_idx = best_child_idx;
+            }
+        }
+        self.items.pop()
+
     }
 }
 

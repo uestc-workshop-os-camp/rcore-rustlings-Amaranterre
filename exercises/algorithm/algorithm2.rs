@@ -76,7 +76,7 @@ impl<T> LinkedList<T> {
 
         while let Some(cur_node_ptr) = current_node {
             unsafe {
-                current_node = (*cur_node_ptr.as_ptr()).next1;
+                current_node = (*cur_node_ptr.as_ptr()).next;
                 (*cur_node_ptr.as_ptr()).next = (*cur_node_ptr.as_ptr()).prev;
                 (*cur_node_ptr.as_ptr()).prev = current_node;
             }
